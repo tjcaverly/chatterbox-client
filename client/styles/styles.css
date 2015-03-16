@@ -5,8 +5,11 @@ body {
     font-family: arial, sans-serif;
 }
 
+
+
 #main {
-    width: 500px;
+    width: 100%;
+    height: 600px;
     margin: auto;
     text-align: left;
     background: white;
@@ -81,4 +84,34 @@ form input[type=text] {
 
 .spinner img {
     padding: 10px;
+}
+
+.rooms {
+    width: 34%;
+    height: 450px;
+    float: left;
+
+}
+
+.messages {
+    width: 50%;
+    height: 450px;
+    margin: 0 0 0 5%;
+    float: left;
+
+}
+
+.content {
+    height: 450px;
+    background-color: white;
+    overflow-y: auto;
+
+}
+
+.username {
+    color: red;
+}
+
+.text {
+    color: grey;
 }
