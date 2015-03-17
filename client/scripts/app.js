@@ -1,30 +1,24 @@
 // YOUR CODE HERE:
 
 var app = {};
+// This is the url you should use to communicate with the parse API server.
 app.server = 'https://api.parse.com/1/classes/chatterbox';
 app.roomnames = {};
-
-
+//Setting current room
+app.currentRoomName = "lobby";
 
 app.fetch = function(roomname){
-
-
 	$.ajax({
-  	// This is the url you should use to communicate with the parse API server.
 	  url: app.server,
 	  type: 'GET',
-	  data: 'order=-createdAt',//&where={"roomname":{"$in":["'+roomname+'"]}}',
+	  data: 'order=-createdAt',
 	  contentType: 'application/json',
 	  success: function (data) {
-	  	//debugger;
 	    console.log('chatterbox: Message retrieved');
-	    console.log(data);
 	    displayMessage(data);
 	  },
 	  error: function (data) {
-	    // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
 	    console.error('chatterbox: Failed to retrieve messages');
-
 	  }
 	});
 };
@@ -39,20 +33,17 @@ $("#submit").click (function(){
 	var message = {
 		username: get("username"),
 		text: text,
-		roomname: '4chan'
+		roomname: app.currentRoomName
 	}
-
 	app.send(message);
 	$('#textField').val(''); //empty textfield
 });
-
 
 
 //adding message by current user
 app.send = function(text) {
 
 	$.ajax({
-	  // This is the url you should use to communicate with the parse API server.
 	  url: app.server,
 	  type: 'POST',
 	  data: JSON.stringify(text),
@@ -61,7 +52,6 @@ app.send = function(text) {
 	    console.log('chatterbox: Message sent');
 	  },
 	  error: function (data) {
-	    // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
 	    console.error('chatterbox: Failed to send message');
 	  }
 	});
@@ -71,11 +61,14 @@ app.send = function(text) {
 
 var displayMessage = function(data) {
 	app.clearMessages();
-	app.clearRooms();
 
 	for (var i=0; i<data.results.length; i++){
 		app.addMessage(data.results[i]);
+	}
 
+	app.clearRooms();
+	for (var i in app.roomnames) {
+		app.addRoom(escapeHtml(i));
 	}
 }
 
@@ -85,12 +78,11 @@ app.clearMessages = function(){
 
 app.clearRooms = function(){
 	$('#roomSelect').empty();
-	app.roomnames = {};
+	//app.roomnames = {};
 }
 
-app.addMessage = function(message) {
-
-		var entityMap = {
+//escaping 
+var entityMap = {
 	    "&": "&amp;",
 	    "<": "&lt;",
 	    ">": "&gt;",
@@ -105,24 +97,35 @@ app.addMessage = function(message) {
 		  });
 		}
 
-
-
-		if (! (message.roomname in app.roomnames) ){
-			app.addRoom(escapeHtml(message.roomname));
-			app.roomnames[message.roomname] = true;
-		}
-
-		$('#chats').append("<p>" + "<span class='username'>" + escapeHtml(message.username) + 
-			"</span>: <span class='text'>" + escapeHtml(message.text) + "</span> <span class='time'>" + 
-			escapeHtml(message.createdAt)+"</span></p>");
+app.addMessage = function(message) {
+	app.roomnames[message.roomname] = true;
+	if (message.roomname === app.currentRoomName) {
+	  $('#chats').append("<p>" + "<span class='username'>" + escapeHtml(message.username) + 
+		  "</span>: <span class='text'>" + escapeHtml(message.text) + "</span> <span class='time'>" + 
+			  escapeHtml(message.createdAt)+"</span></p>");
+	}
 }
 
 //Adding Room
 $("#addRoom").click(function(){
-	var room = prompt("Enter name of room to add: ");
-	app.addRoom(room);
+  var room = prompt("Enter name of room to add: ");
+  app.roomnames[room] = true;
+});
+/*
+$(".clickable").click(function(){
+	alert("hi");
+	$(this).toggleClass('clickable');
+    e.preventDefault();
+});
+*/
+
+
+//select rooms
+$('#roomSelect').click(function(e){
+	app.currentRoomName = e.target.innerHTML;
 });
 
+//adding Room
 app.addRoom = function(room){
 	$('#roomSelect').append("<p>"+room+"</p>");
 }
