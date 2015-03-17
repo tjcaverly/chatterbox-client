@@ -98,10 +98,11 @@ form input[type=text] {
     height: 450px;
     margin: 0 0 0 5%;
     float: left;
+    box-shadow: 0 0 20px 3px #000 inset;
 
 }
 
-.content {
+#chats {
     height: 450px;
     background-color: white;
     overflow-y: auto;
@@ -114,4 +115,12 @@ form input[type=text] {
 
 .text {
     color: grey;
+}
+
+h2{
+    text-align: left;
+}
+
+#addRoom{
+    float: left;
 }

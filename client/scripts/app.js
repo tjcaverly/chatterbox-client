@@ -1,17 +1,24 @@
 // YOUR CODE HERE:
 
-var retrieveMessages = function(){
+var app = {};
+app.server = 'https://api.parse.com/1/classes/chatterbox';
+app.roomnames = {};
+
+
+
+app.fetch = function(roomname){
+
+
 	$.ajax({
   	// This is the url you should use to communicate with the parse API server.
-	  url: 'https://api.parse.com/1/classes/chatterbox',
+	  url: app.server,
 	  type: 'GET',
-	  data: 'order=-createdAt',
+	  data: 'order=-createdAt',//&where={"roomname":{"$in":["'+roomname+'"]}}',
 	  contentType: 'application/json',
 	  success: function (data) {
 	  	//debugger;
 	    console.log('chatterbox: Message retrieved');
 	    console.log(data);
-
 	    displayMessage(data);
 	  },
 	  error: function (data) {
@@ -23,34 +30,32 @@ var retrieveMessages = function(){
 };
 
 //submit button for message
-$("button").click (function(){
+$("#submit").click (function(){
+	var get = function (name){
+   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+      return decodeURIComponent(name[1]);
+	}
 	var text = $("#textField").val();
-	addMessage(text);
+	var message = {
+		username: get("username"),
+		text: text,
+		roomname: '4chan'
+	}
+
+	app.send(message);
 	$('#textField').val(''); //empty textfield
 });
 
 
 
 //adding message by current user
-var addMessage = function(text) {
-	//get username
-	var get = function (name){
-   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-      return decodeURIComponent(name[1]);
-	}
-
-	var message = {
-	  username: get("username"),
-	  text: text,
-	  roomname: '4chan'
-	};
-
+app.send = function(text) {
 
 	$.ajax({
 	  // This is the url you should use to communicate with the parse API server.
-	  url: 'https://api.parse.com/1/classes/chatterbox',
+	  url: app.server,
 	  type: 'POST',
-	  data: JSON.stringify(message),
+	  data: JSON.stringify(text),
 	  contentType: 'application/json',
 	  success: function (data) {
 	    console.log('chatterbox: Message sent');
@@ -65,33 +70,68 @@ var addMessage = function(text) {
 
 
 var displayMessage = function(data) {
-	var entityMap = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': '&quot;',
-    "'": '&#39;',
-    "/": '&#x2F;'
-  };
-
-	var escapeHtml = function(string) {
-	  return String(string).replace(/[&<>"'\/]/g, function (s) {
-	    return entityMap[s];
-	  });
-	}
-	$('.content').empty();
+	app.clearMessages();
+	app.clearRooms();
 
 	for (var i=0; i<data.results.length; i++){
-		var message = data.results[i];
-		$('.content').append("<p>" + "<span class='username'>" + escapeHtml(message.username) + 
-			"</span>: <span class='text'>" + escapeHtml(message.text) + "</span> <span class='time'>" + escapeHtml(message.createdAt)+"</span></p>");
+		app.addMessage(data.results[i]);
+
 	}
 }
 
+app.clearMessages = function(){
+	$('#chats').empty();
+}
 
-setInterval(retrieveMessages, 1000);
+app.clearRooms = function(){
+	$('#roomSelect').empty();
+	app.roomnames = {};
+}
 
-retrieveMessages();
+app.addMessage = function(message) {
+
+		var entityMap = {
+	    "&": "&amp;",
+	    "<": "&lt;",
+	    ">": "&gt;",
+	    '"': '&quot;',
+	    "'": '&#39;',
+	    "/": '&#x2F;'
+	  };
+
+		var escapeHtml = function(string) {
+		  return String(string).replace(/[&<>"'\/]/g, function (s) {
+		    return entityMap[s];
+		  });
+		}
+
+
+
+		if (! (message.roomname in app.roomnames) ){
+			app.addRoom(escapeHtml(message.roomname));
+			app.roomnames[message.roomname] = true;
+		}
+
+		$('#chats').append("<p>" + "<span class='username'>" + escapeHtml(message.username) + 
+			"</span>: <span class='text'>" + escapeHtml(message.text) + "</span> <span class='time'>" + 
+			escapeHtml(message.createdAt)+"</span></p>");
+}
+
+//Adding Room
+$("#addRoom").click(function(){
+	var room = prompt("Enter name of room to add: ");
+	app.addRoom(room);
+});
+
+app.addRoom = function(room){
+	$('#roomSelect').append("<p>"+room+"</p>");
+}
+app.init = function(){
+	setInterval(app.fetch, 1000);
+	app.fetch();
+}
+
+app.init();
 
 
 
