@@ -25,18 +25,15 @@ app.fetch = function(roomname){
 	});
 };
 
-app.handleSubmit = function(){
-	console.log('submit');
-};
+app.handleSubmit = function(evt){
+	console.log('handleSubmit');
+	evt.preventDefault();
 
-//submit button for message
-$("#send .submit").on('click', function(){
-
-	app.handleSubmit();
 	var get = function (name){
    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
       return decodeURIComponent(name[1]);
 	}
+
 	var text = $("#message").val();
 	var message = {
 		username: get("username"),
@@ -44,8 +41,12 @@ $("#send .submit").on('click', function(){
 		roomname: app.currentRoomName
 	}
 	app.send(message);
-	$('#textField').val(''); //empty textfield
-});
+	$('#message').val(''); //empty textfield
+
+
+}
+
+
 
 
 //adding message by current user
@@ -162,6 +163,8 @@ app.addRoom = function(room){
 	$('#roomSelect').append("<p>"+room+"</p>");
 }
 app.init = function(){
+//submit button for message
+$("#send").on('submit', app.handleSubmit);
 	setInterval(app.fetch, 1000);
 	app.fetch();
 }
