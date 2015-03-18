@@ -46,9 +46,6 @@ app.handleSubmit = function(evt){
 
 }
 
-
-
-
 //adding message by current user
 app.send = function(text) {
 
@@ -79,13 +76,13 @@ var displayMessage = function(data) {
 
 	app.clearRooms();
 	for (var i in app.roomnames) {
-		app.addRoom(escapeHtml(i));
+		app.addRoom(i);
 	}
 }
 
 app.addFriend = function(username) {
 	console.log(username);
-	app.friends[escapeHtml(username)] = true;
+	app.friends[_.escape(username)] = true;
 }
 
 app.clearMessages = function(){
@@ -97,40 +94,22 @@ app.clearRooms = function(){
 
 }
 
-//escaping 
-var entityMap = {
-	    "&": "&amp;",
-	    "<": "&lt;",
-	    ">": "&gt;",
-	    '"': '&quot;',
-	    "'": '&#39;',
-	    "/": '&#x2F;'
-	  };
-
-		var escapeHtml = function(string) {
-		  return String(string).replace(/[&<>"'\/]/g, function (s) {
-		    return entityMap[s];
-		  });
-		}
-
-
-
 app.addMessage = function(message) {
 	app.roomnames[message.roomname] = true;
 
 	if (message.roomname === app.currentRoomName) {
 
 
-		if (escapeHtml(message.username) in app.friends) {
-			var textNode = "<span class='text friend'>" + escapeHtml(message.text) + "</span>";
+		if (_.escape(message.username) in app.friends) {
+			var textNode = "<span class='text friend'>" + _.escape(message.text) + "</span>";
 	  } else {
-	  	var textNode = "<span class='text'>" + escapeHtml(message.text) + "</span>";
+	  	var textNode = "<span class='text'>" + _.escape(message.text) + "</span>";
 	  }
-	  var userNameNode = "<span class='username'>" + escapeHtml(message.username) + "</span>";
+	  var userNameNode = "<span class='username'>" + _.escape(message.username) + "</span>";
 
 
 	  var node = "<p>" + userNameNode + ": " + textNode +  " <span class='time'>" + 
-			  escapeHtml(message.createdAt)+"</span></p>";
+			  _.escape(message.createdAt)+"</span></p>";
 
 	  $('#chats').append(node).find('.username').on('click', function(){ 
 	  	app.addFriend($(this).text());
@@ -144,23 +123,15 @@ $("#addRoom").click(function(){
   var room = prompt("Enter name of room to add: ");
   app.roomnames[room] = true;
 });
-/*
-$(".clickable").click(function(){
-	alert("hi");
-	$(this).toggleClass('clickable');
-    e.preventDefault();
-});
-*/
-
 
 //select rooms
 $('#roomSelect').click(function(e){
-	app.currentRoomName = e.target.innerHTML;
+	app.currentRoomName = _.unescape(e.target.innerHTML);
 });
 
 //adding Room
 app.addRoom = function(room){
-	$('#roomSelect').append("<p>"+room+"</p>");
+	$('#roomSelect').append("<p>"+_.escape(room)+"</p>");
 }
 app.init = function(){
 //submit button for message

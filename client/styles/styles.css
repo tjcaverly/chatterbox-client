@@ -1,22 +1,25 @@
 body {
-    background: #eee;
+    background-image: url('../../background.jpg');
+    background-size: 125%;
+    background-color: #000;
+    background-repeat: no-repeat;
+    color:#fff;
     text-align: center;
     padding: 0 25px;
     font-family: arial, sans-serif;
 }
 
 #main {
+    background-color: #000 0.5;
     width: 100%;
     height: 600px;
     margin: auto;
     text-align: left;
-    background: white;
     padding: 50px 60px;
-    border: solid #ddd;
-    border-width: 0 1px 1px 1px;
 }
 
-#main h1 {
+h1 {
+    margin-left: 200px;
     margin-top: 0;
     font-size: 35px;
     margin-bottom: 5px;
@@ -60,19 +63,6 @@ form input[type=text] {
     padding: 5px;
 }
 
-.chat {
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: #eee;
-}
-
-.chat .username {
-    font-weight: 800;
-}
-
-.chat:hover {
-    background-color: #ddd;
-}
 
 .spinner {
     float: right;
@@ -85,13 +75,17 @@ form input[type=text] {
 }
 
 .rooms {
+    background-color: rgba(0,0,0,0.8);
     width: 34%;
     height: 450px;
     float: left;
+    box-shadow: 0 0 20px 3px #000 inset;
+
 
 }
 
 .messages {
+    background: rgba(0,0,0,0.8);
     width: 50%;
     height: 450px;
     margin: 0 0 0 5%;
@@ -101,8 +95,9 @@ form input[type=text] {
 }
 
 #chats {
+    margin: 0px 20px 0px 20px;
+    background-color: #000 0.5;
     height: 450px;
-    background-color: white;
     overflow-y: auto;
 
 }
@@ -115,23 +110,22 @@ form input[type=text] {
     color: grey;
 }
 
-h2{
-  float;left;
-  font-size: 20px;
-}
 
-#addRoom{
-    float: left;
-}
+
 
 #roomSelect{
-    color:blue;
-    height:400px;
+    margin: 5px 5px 5px 5px; 
+    background: #000 0.5;
+    color:white;
+    height:350px;
     overflow-y: auto;
+}
+p{
+    background: #000 0.5;
 }
 
 p:hover { 
-    color:red;
+    color:pink;
 }
 
 .friend {
