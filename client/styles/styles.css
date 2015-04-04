@@ -110,9 +110,6 @@ form input[type=text] {
     color: grey;
 }
 
-
-
-
 #roomSelect{
     margin: 5px 5px 5px 5px; 
     background: #000 0.5;
@@ -130,7 +127,7 @@ p:hover {
 
 .friend {
     font-weight: bold;
-    color: black;
+    color: orange;
 }
 
 
